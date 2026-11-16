@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>B.A. Study Portal</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            green: '#065f46', /* emerald-800 */
+                            darkgreen: '#022c22', /* emerald-950 */
+                            gold: '#d97706', /* amber-600 */
+                            lightgold: '#fbbf24', /* amber-400 */
+                            white: '#ffffff',
+                            bg: '#f3f4f6' /* gray-100 */
+                        }
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.4s ease-out forwards',
+                        'slide-up': 'slideUp 0.3s ease-out forwards',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom scrollbar for a cleaner look */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #065f46; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #047857; 
+        }
+        .pdf-card {
+            transition: all 0.3s ease;
+        }
+        .pdf-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        }
+        .filter-btn.active {
+            background-color: #065f46;
+            color: #ffffff;
+            border-color: #065f46;
+            box-shadow: 0 4px 6px -1px rgba(6, 95, 70, 0.4);
+        }
+    </style>
+</head>
+<body class="bg-brand-bg text-gray-800 font-sans min-h-screen flex flex-col relative">
+
+    <!-- Navigation Header -->
+    <header class="bg-brand-green shadow-lg sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-brand-lightgold text-brand-darkgreen p-2 rounded-lg shadow-inner">
+                        <i class="fa-solid fa-graduation-cap text-2xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-white tracking-wide">B.A. Study Material Portal</h1>
+                        <p class="text-brand-lightgold text-sm font-medium">Bastar / Durg University Notes</p>
+                    </div>
+                </div>
+                <div class="hidden md:block">
+                    <div class="relative">
+                        <input type="text" id="searchInput" placeholder="Search notes..." class="bg-brand-darkgreen text-white placeholder-gray-400 rounded-full py-2 px-4 pl-10 focus:outline-none focus:ring-2 focus:ring-brand-lightgold w-64 transition-all">
+                        <i class="fa-solid fa-search absolute left-3 top-3 text-gray-400"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Welcome Hero Section -->
+        <div class="bg-white rounded-2xl shadow-sm p-6 sm:p-10 mb-8 border-l-4 border-brand-gold flex flex-col sm:flex-row justify-between items-center animate-slide-up">
+            <div>
+                <h2 class="text-3xl font-bold text-gray-900 mb-2">My Academic Repository</h2>
+                <p class="text-gray-600 max-w-2xl">Access, organize, and manage all your Bachelor of Arts PDF study materials, assignments, and reference books in one place.</p>
+            </div>
+            <div class="mt-6 sm:mt-0">
+                <div class="text-center px-6 py-4 bg-gray-50 rounded-xl border border-gray-100 shadow-inner">
+                    <span class="block text-3xl font-bold text-brand-green" id="totalDocsCount">0</span>
+                    <span class="text-sm text-gray-500 uppercase tracking-wider font-semibold">Documents</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter Section -->
+        <div class="mb-8 space-y-6">
+            <!-- Subject Filters -->
+            <div>
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="text-sm uppercase tracking-wider font-bold text-gray-500">Browse by Subject</h3>
+                </div>
+                <!-- Scrollable container for mobile -->
+                <div class="overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0">
+                    <div class="flex space-x-2 min-w-max">
+                        <button class="subject-filter-btn filter-btn active px-5 py-2.5 rounded-full border border-gray-300 bg-white text-gray-700 font-medium transition-colors focus:outline-none" data-subject="All">All Subjects</button>
+                        <button class="subject-filter-btn filter-btn px-5 py-2.5 rounded-full border border-gray-300 bg-white text-gray-700 font-medium transition-colors focus:outline-none hover:bg-gray-50" data-subject="Hindi Literature">Hindi Literature</button>
+                        <button class="subject-filter-btn filter-btn px-5 py-2.5 rounded-full border border-gray-300 bg-white text-gray-700 font-medium transition-colors focus:outline-none hover:bg-gray-50" data-subject="Political Science">Political Science</button>
+                        <button class="subject-filter-btn filter-btn px-5 py-2.5 rounded-full border border-gray-300 bg-white text-gray-700 font-medium transition-colors focus:outline-none hover:bg-gray-50" data-subject="Sociology">Sociology</button>
+                        <button class="subject-filter-btn filter-btn px-5 py-2.5 rounded-full border border-gray-300 bg-white text-gray-700 font-medium transition-colors focus:outline-none hover:bg-gray-50" data-subject="Geography">Geography</button>
+                        <button class="subject-filter-btn filter-btn px-5 py-2.5 rounded-full border border-gray-300 bg-white text-gray-700 font-medium transition-colors focus:outline-none hover:bg-gray-50" data-subject="English">English</button>
+                        <button class="subject-filter-btn filter-btn px-5 py-2.5 rounded-full border border-gray-300 bg-white text-gray-700 font-medium transition-colors focus:outline-none hover:bg-gray-50" data-subject="Botany">Botany</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Semester Filters -->
+            <div>
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="text-sm uppercase tracking-wider font-bold text-gray-500">Filter by Semester</h3>
+                </div>
+                <!-- Scrollable container for mobile -->
+                <div class="overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0">
+                    <div class="flex space-x-2 min-w-max">
+                        <button class="semester-filter-btn filter-btn active px-5 py-2.5 rounded-full border border-gray-300 bg-white text-gray-700 font-medium transition-colors focus:outline-none" data-semester="All">All Semesters</button>
+                        <button class="semester-filter-btn filter-btn px-5 py-2.5 rounded-full border border-gray-300 bg-white text-gray-700 font-medium transition-colors focus:outline-none hover:bg-gray-50" data-semester="1">Semester 1</button>
+                        <button class="semester-filter-btn filter-btn px-5 py-2.5 rounded-full border border-gray-300 bg-white text-gray-700 font-medium transition-colors focus:outline-none hover:bg-gray-50" data-semester="2">Semester 2</button>
+                        <button class="semester-filter-btn filter-btn px-5 py-2.5 rounded-full border border-gray-300 bg-white text-gray-700 font-medium transition-colors focus:outline-none hover:bg-gray-50" data-semester="3">Semester 3</button>
+                        <button class="semester-filter-btn filter-btn px-5 py-2.5 rounded-full border border-gray-300 bg-white text-gray-700 font-medium transition-colors focus:outline-none hover:bg-gray-50" data-semester="4">Semester 4</button>
+                        <button class="semester-filter-btn filter-btn px-5 py-2.5 rounded-full border border-gray-300 bg-white text-gray-700 font-medium transition-colors focus:outline-none hover:bg-gray-50" data-semester="5">Semester 5</button>
+                        <button class="semester-filter-btn filter-btn px-5 py-2.5 rounded-full border border-gray-300 bg-white text-gray-700 font-medium transition-colors focus:outline-none hover:bg-gray-50" data-semester="6">Semester 6</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PDF Grid -->
+        <div id="pdfGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <!-- PDF Cards will be injected here via JavaScript -->
+        </div>
+
+        <!-- Empty State (Hidden by default) -->
+        <div id="emptyState" class="hidden flex flex-col items-center justify-center py-16 text-center">
+            <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4 text-gray-400">
+                <i class="fa-regular fa-folder-open text-4xl"></i>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-700 mb-2">No documents found</h3>
+            <p class="text-gray-500">Try changing the category or search term.</p>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-brand-darkgreen text-gray-300 py-6 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="text-sm">&copy; 2026 B.A. Study Portal. Organized for success.</p>
+        </div>
+    </footer>
+
+    <!-- Application Logic -->
+    <script>
+        // =========================================================================
+        // DATA MANAGEMENT: ADD YOUR STUDY MATERIALS HERE
+        // =========================================================================
+        // Simply add a new object to this 'studyMaterials' array to display a new PDF.
+        // Update the 'pdfLink' with your actual internal or external link to the PDF.
+        
+        const studyMaterials = [
+            { 
+                id: 1, 
+                title: 'मध्यकालीन हिन्दी काव्य', 
+                subject: 'Hindi Literature', 
+                semester: '3',
+                courseType: 'DSC', 
+                courseCode: 'HNSC-03', 
+                date: 'Nov 16, 2026', 
+                size: '2.4 MB', 
+                pdfLink: '#', // <-- Add your PDF link here (e.g., 'notes/hindi-kavya.pdf')
+                iconColor: 'text-orange-500', 
+                bgColor: 'bg-orange-50' 
+            },
+            { 
+                id: 2, 
+                title: 'Western Political Thought', 
+                subject: 'Political Science', 
+                semester: '3',
+                courseType: 'DSC', 
+                courseCode: 'PSSC-03', 
+                date: 'Nov 16, 2026', 
+                size: '3.1 MB', 
+                pdfLink: '#', // <-- Add your PDF link here
+                iconColor: 'text-purple-500', 
+                bgColor: 'bg-purple-50' 
+            },
+            { 
+                id: 3, 
+                title: 'Tribal Culture of Chhattisgarh', 
+                subject: 'Sociology', 
+                semester: '3',
+                courseType: 'DSC', 
+                courseCode: 'SOSC-03', 
+                date: 'Nov 16, 2026', 
+                size: '1.8 MB', 
+                pdfLink: '#', // <-- Add your PDF link here
+                iconColor: 'text-blue-500', 
+                bgColor: 'bg-blue-50' 
+            },
+            { 
+                id: 4, 
+                title: 'Crime and Society', 
+                subject: 'Sociology', 
+                semester: '3',
+                courseType: 'DSE', 
+                courseCode: 'SOSE-01', 
+                date: 'Nov 16, 2026', 
+                size: '2.2 MB', 
+                pdfLink: '#', // <-- Add your PDF link here
+                iconColor: 'text-blue-500', 
+                bgColor: 'bg-blue-50' 
+            },
+            { 
+                id: 5, 
+                title: 'Physical Geography', 
+                subject: 'Geography', 
+                semester: '1',
+                courseType: 'DSC', 
+                courseCode: 'GEOG-01', 
+                date: 'Nov 16, 2026', 
+                size: '4.5 MB', 
+                pdfLink: '#', // <-- Add your PDF link here
+                iconColor: 'text-emerald-500', 
+                bgColor: 'bg-emerald-50' 
+            },
+            { 
+                id: 6, 
+                title: 'English Language', 
+                subject: 'English', 
+                semester: '3',
+                courseType: 'AEC', 
+                courseCode: 'AEC-02', 
+                date: 'Nov 16, 2026', 
+                size: '1.5 MB', 
+                pdfLink: '#', // <-- Add your PDF link here
+                iconColor: 'text-red-500', 
+                bgColor: 'bg-red-50' 
+            },
+            { 
+                id: 7, 
+                title: 'Herbal Plant & Human Health', 
+                subject: 'Botany', 
+                semester: '3',
+                courseType: 'VAC', 
+                courseCode: 'BOVAC-02', 
+                date: 'Nov 16, 2026', 
+                size: '4.0 MB', 
+                pdfLink: '#', // <-- Add your PDF link here
+                iconColor: 'text-emerald-600', 
+                bgColor: 'bg-emerald-100' 
+            }
+        ];
+
+        const pdfGrid = document.getElementById('pdfGrid');
+        const emptyState = document.getElementById('emptyState');
+        const totalDocsCount = document.getElementById('totalDocsCount');
+        let currentSubjectFilter = 'All';
+        let currentSemesterFilter = 'All';
+        let searchQuery = '';
+
+        // Initialize App
+        function init() {
+            renderCards();
+            setupFilters();
+            setupSearch();
+            updateTotalCount();
+        }
+
+        // Render PDF Cards based on filters
+        function renderCards() {
+            pdfGrid.innerHTML = ''; // Clear current
+            
+            const filteredData = studyMaterials.filter(pdf => {
+                const matchesSubject = currentSubjectFilter === 'All' || pdf.subject === currentSubjectFilter;
+                const matchesSemester = currentSemesterFilter === 'All' || pdf.semester === currentSemesterFilter;
+                const matchesSearch = pdf.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                                      pdf.subject.toLowerCase().includes(searchQuery.toLowerCase());
+                
+                return matchesSubject && matchesSemester && matchesSearch;
+            });
+
+            if (filteredData.length === 0) {
+                emptyState.classList.remove('hidden');
+            } else {
+                emptyState.classList.add('hidden');
+                
+                filteredData.forEach((pdf, index) => {
+                    // Staggered animation delay
+                    const animationDelay = index * 0.05;
+                    
+                    const cardHTML = `
+                        <div class="pdf-card bg-white rounded-xl border border-gray-100 p-5 flex flex-col h-full animate-fade-in" style="animation-delay: ${animationDelay}s; opacity: 0;">
+                            <div class="flex justify-between items-start mb-4">
+                                <div class="w-12 h-12 rounded-lg ${pdf.bgColor} flex items-center justify-center flex-shrink-0">
+                                    <i class="fa-solid fa-file-pdf text-2xl ${pdf.iconColor}"></i>
+                                </div>
+                                <div class="flex flex-col gap-1 items-end">
+                                    <div class="flex space-x-1">
+                                        <span class="bg-brand-lightgold text-brand-darkgreen text-xs px-2.5 py-1 rounded-full font-bold border border-yellow-500 shadow-sm">
+                                            Sem ${pdf.semester}
+                                        </span>
+                                        <span class="bg-gray-100 text-gray-600 text-xs px-2.5 py-1 rounded-full font-medium border border-gray-200">
+                                            ${pdf.subject}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="text-xs font-bold text-brand-green mb-1 uppercase tracking-wider">${pdf.courseCode} • ${pdf.courseType}</div>
+                            <h4 class="font-bold text-gray-800 text-lg mb-2 leading-tight flex-grow line-clamp-2" title="${pdf.title}">${pdf.title}</h4>
+                            
+                            <div class="text-sm text-gray-500 flex items-center justify-between mb-5 mt-auto">
+                                <span class="flex items-center"><i class="fa-regular fa-calendar mr-1.5"></i>${pdf.date}</span>
+                                <span class="flex items-center"><i class="fa-solid fa-weight-hanging mr-1.5"></i>${pdf.size}</span>
+                            </div>
+                            
+                            <div class="grid grid-cols-2 gap-3 border-t border-gray-100 pt-4 mt-auto">
+                                <a href="${pdf.pdfLink}" target="_blank" class="flex items-center justify-center py-2 px-2 rounded-lg text-brand-green bg-emerald-50 hover:bg-emerald-100 font-semibold text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-200">
+                                    <i class="fa-regular fa-eye mr-2"></i> View
+                                </a>
+                                <a href="${pdf.pdfLink}" download class="flex items-center justify-center py-2 px-2 rounded-lg text-white bg-brand-green hover:bg-brand-darkgreen font-semibold text-sm transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                                    <i class="fa-solid fa-download mr-2"></i> Download
+                                </a>
+                            </div>
+                        </div>
+                    `;
+                    pdfGrid.insertAdjacentHTML('beforeend', cardHTML);
+                });
+            }
+        }
+
+        // Setup Filter Buttons
+        function setupFilters() {
+            // Subject Filters
+            const subjectBtns = document.querySelectorAll('.subject-filter-btn');
+            subjectBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    subjectBtns.forEach(b => b.classList.remove('active'));
+                    e.target.classList.add('active');
+                    
+                    currentSubjectFilter = e.target.getAttribute('data-subject');
+                    renderCards();
+                });
+            });
+
+            // Semester Filters
+            const semesterBtns = document.querySelectorAll('.semester-filter-btn');
+            semesterBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    semesterBtns.forEach(b => b.classList.remove('active'));
+                    e.target.classList.add('active');
+                    
+                    currentSemesterFilter = e.target.getAttribute('data-semester');
+                    renderCards();
+                });
+            });
+        }
+
+        // Setup Search
+        function setupSearch() {
+            const searchInput = document.getElementById('searchInput');
+            searchInput.addEventListener('input', (e) => {
+                searchQuery = e.target.value;
+                renderCards();
+            });
+        }
+
+        // Update Total Count
+        function updateTotalCount() {
+            totalDocsCount.innerText = studyMaterials.length;
+        }
+
+        // Run on load
+        window.onload = init;
+    </script>
+</body>
+</html>
